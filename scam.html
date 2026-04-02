@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MediaMarkt | Ostereiersuche 2026</title>
+    <style>
+        :root { --mm-red: #df0000; --mm-black: #000; --wa-green: #25D366; --star-gold: #ffa41c; }
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; font-family: 'Arial', sans-serif; background: #fff; color: #333; }
+
+        header { background: var(--mm-red); color: white; padding: 15px; text-align: center; font-style: italic; font-weight: 900; font-size: 1.8rem; position: sticky; top: 0; z-index: 100; }
+
+        .main-content { padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 400px; }
+        .screen { display: none; width: 100%; flex-direction: column; align-items: center; text-align: center; }
+        .active { display: flex; }
+
+        #start-screen img { width: 100%; max-width: 500px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h2 { color: var(--mm-red); font-size: 1.4rem; text-transform: uppercase; margin: 0 0 10px 0; }
+        
+        .stock-box { background: #ffcc00; color: #000; padding: 10px 20px; border-radius: 5px; font-weight: bold; margin: 15px 0; }
+        .btn { background: var(--mm-red); color: white; border: none; padding: 18px; width: 100%; max-width: 400px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; }
+        
+        .quiz-option { background: #f4f4f4; border: 1px solid #ddd; padding: 15px; margin: 5px 0; width: 100%; max-width: 400px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 400px; margin: 20px 0; }
+        .box { aspect-ratio: 1; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; cursor: pointer; }
+        .box.open { background: #f0f0f0; color: #333; border: 1px solid #ddd; }
+
+        #share-area { width: 100%; max-width: 450px; background: #f9f9f9; padding: 20px; border-radius: 15px; border: 1px solid #eee; }
+        .step-num { background: #333; color: white; width: 25px; height: 25px; display: inline-block; border-radius: 50%; text-align: center; line-height: 25px; font-weight: bold; }
+        
+        .progress-container { width: 100%; background: #ddd; border-radius: 20px; height: 25px; margin: 15px 0; position: relative; overflow: hidden; }
+        .progress-bar { background: var(--wa-green); height: 100%; width: 0%; transition: 0.5s; }
+        .progress-text { position: absolute; width: 100%; text-align: center; line-height: 25px; font-weight: bold; }
+
+        .wa-btn { background: var(--wa-green); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1.2rem; cursor: pointer; display: block; margin: 10px 0; }
+        
+        /* Formular Style */
+        #form-screen { display: none; width: 100%; max-width: 450px; text-align: left; background: #fff; padding: 20px; border: 2px solid var(--mm-red); border-radius: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+        .finish-btn { background: #28a745; color: white; border: none; padding: 20px; width: 100%; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 1.3rem; text-transform: uppercase; }
+
+        /* Social Proof Section */
+        .social-proof { background: #f4f4f4; border-top: 1px solid #ddd; padding: 25px 15px; width: 100%; margin-top: 30px; }
+        .review-item { margin-bottom: 20px; text-align: left; max-width: 600px; margin: 0 auto 20px auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .stars { color: var(--star-gold); margin-bottom: 5px; }
+        .helpful { font-size: 0.75rem; color: #777; margin-top: 8px; display: block; }
+        .faq-section { max-width: 600px; margin: 30px auto; text-align: left; }
+        footer { padding: 20px; text-align: center; font-size: 0.8rem; color: #999; }
+    </style>
+</head>
+<body>
+
+<header>MediaMarkt</header>
+
+<div class="main-content">
+    <div id="start-screen" class="screen active">
+        <img src="https://i.postimg.cc/h46KxyBv/mmkthead.jpg" alt="Vorschau">
+        <h2>Hey, Tech-Fan! 🐰</h2>
+        <p>Du bist eingeladen, an der offiziellen MediaMarkt Ostereiersuche 2026 teilzunehmen. Finde das versteckte goldene Ei und gewinne fantastische Preise — 100 % GRATIS.</p>
+        <div class="stock-box">Noch <span id="stock-val">114</span> Preise verfügbar.</div>
+        <button class="btn" onclick="showScreen('quiz-screen')">Teilnahme starten</button>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <h2 id="q-title">Frage 1 von 4</h2>
+        <p id="q-text" style="font-weight:bold;"></p>
+        <div id="quiz-options-container" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <h2 id="game-headline">Finde das goldene Ei!</h2>
+        <div id="game-info-box">Versuche: <span id="tries-count" style="color:var(--mm-red); font-weight:bold;">3</span></div>
+        <div class="grid" id="grid"></div>
+
+        <div id="share-area" style="display:none;">
+            <h2 style="color:var(--mm-black)">Bestätige jetzt deinen Gewinn</h2>
+            <p>Dein Gewinn: <strong>iPhone 16 pro 256GB</strong></p>
+            <div style="text-align:left; margin-top:15px; font-size:0.9rem;">
+                <div class="step-num">1</div> Diese Aktion teilen.<br>
+                <div class="step-num">2</div> Leiste bis 100% füllen.
+            </div>
+            <button class="wa-btn" onclick="shareWhatsApp()">WhatsApp</button>
+            <div class="progress-container">
+                <div class="progress-bar" id="bar"></div>
+                <div class="progress-text" id="percent-text">0%</div>
+            </div>
+            <p style="font-size:0.8rem; color:var(--mm-red);">Zeit läuft ab: <span id="timer">14:43</span></p>
+
+            <div id="final-btn-area" style="display:none; margin-top:15px;">
+                <p><strong>Fast geschafft!</strong> Klicke jetzt auf Abschließen.</p>
+                <button class="finish-btn" onclick="showForm()">ABSCHLIESSEN</button>
+            </div>
+        </div>
+
+        <div id="form-screen">
+            <h2 style="color:var(--mm-red); text-align:center;">Lieferadresse</h2>
+            <p style="font-size:0.85rem; text-align:center;">Wohin sollen wir dein iPhone 16 Pro schicken?</p>
+            <div class="form-group">
+                <label>Vor- und Nachname</label>
+                <input type="text" placeholder="z.B. Max Mustermann">
+            </div>
+            <div class="form-group">
+                <label>Straße & Hausnummer</label>
+                <input type="text" placeholder="Musterstraße 12">
+            </div>
+            <div class="form-group">
+                <label>PLZ & Stadt</label>
+                <input type="text" placeholder="12345 Berlin">
+            </div>
+            <div class="form-group">
+                <label>E-Mail Adresse</label>
+                <input type="email" placeholder="max@beispiel.de">
+            </div>
+            <button class="finish-btn" onclick="alert('Daten erfolgreich übermittelt! Du erhältst in Kürze eine Bestätigung per E-Mail.')">JETZT BESTÄTIGEN</button>
+        </div>
+    </div>
+</div>
+
+<section class="social-proof">
+    <div style="max-width:600px; margin:0 auto 20px auto; text-align:left;">
+        <div class="stars">★★★★★ 4.8 von 5</div>
+        <div style="font-size:0.8rem;">31.551 globale Bewertungen</div>
+    </div>
+    <div class="review-item">
+        <strong>Micha Stöcker</strong><br>
+        <span class="stars">★★★★★</span>
+        <div style="font-weight:bold;">Heute angekommen – danke MediaMarkt!</div>
+        <div style="font-size:0.9rem;">Die Lieferung war blitzschnell und das Paket war in perfektem Zustand.</div>
+        <span class="helpful">1.035 Personen fanden dies hilfreich</span>
+    </div>
+    <div class="review-item">
+        <strong>Lara Langbein</strong><br>
+        <span class="stars">★★★★★</span>
+        <div style="font-weight:bold;">Es funktioniert wirklich!</div>
+        <div style="font-size:0.9rem;">Man muss nur alle Schritte genau befolgen. Allen viel Erfolg!</div>
+        <span class="helpful">685 Personen fanden dies hilfreich</span>
+    </div>
+    <div class="faq-section">
+        <h3>Häufig gestellte Fragen</h3>
+        <p><strong>Ist die Teilnahme kostenlos?</strong><br>Ja, 100% kostenlos.</p>
+        <p><strong>Wie funktioniert es?</strong><br>Fragen beantworten, Ei finden, Adresse angeben.</p>
+    </div>
+</section>
+
+<footer>© 2026 MediaMarkt Ostereiersuche.</footer>
+
+<script>
+    let stock = 114;
+    setInterval(() => { if(stock > 5) { stock--; document.getElementById('stock-val').innerText = stock; } }, 3000);
+
+    const questions = [
+        { title: "Frage 1 von 4", text: "Hast du schon von der MediaMarkt Ostereiersuche gehört?", options: ["JA", "NEIN"] },
+        { title: "Frage 2 von 4", text: "Wenn du heute gewinnst, was würdest du dir am liebsten aussuchen?", options: ["SMARTPHONE", "GAMING", "BEAUTY & PFLEGE", "3.000 € GUTSCHEIN"] },
+        { title: "Frage 3 von 4", text: "Wie oft kaufst du bei MediaMarkt ein?", options: ["REGELMÄSSIG", "AB UND ZU", "SELTEN", "ZUM ERSTEN MAL"] },
+        { title: "Frage 4 von 4", text: "Möchtest du ein PS5, Dyson Airwrap oder 3.000 € Gutschein gewinnen?", options: ["JA, UNBEDINGT!", "NICHT JETZT"] }
+    ];
+
+    let currentStep = 0;
+    function renderQuiz() {
+        const q = questions[currentStep];
+        document.getElementById('q-title').innerText = q.title;
+        document.getElementById('q-text').innerText = q.text;
+        const container = document.getElementById('quiz-options-container'); container.innerHTML = '';
+        q.options.forEach(opt => {
+            const btn = document.createElement('button'); btn.className = 'quiz-option'; btn.innerText = opt;
+            btn.onclick = () => { currentStep++; if(currentStep < questions.length) renderQuiz(); else showScreen('game-screen'); };
+            container.appendChild(btn);
+        });
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'quiz-screen') renderQuiz();
+        if(id === 'game-screen') initGame();
+    }
+
+    let progress = 0;
+    function shareWhatsApp() {
+        window.location.href = "whatsapp://send?text=Ich habe gerade gewonnen! Versuch es auch: [LINK]";
+        setTimeout(() => {
+            progress = Math.min(progress + 34, 100);
+            document.getElementById('bar').style.width = progress + "%";
+            document.getElementById('percent-text').innerText = progress + "%";
+            if(progress >= 100) document.getElementById('final-btn-area').style.display = "block";
+        }, 1500);
+    }
+
+    function showForm() {
+        document.getElementById('share-area').style.display = "none";
+        document.getElementById('form-screen').style.display = "block";
+    }
+
+    function initGame() {
+        let tries = 3;
+        const grid = document.getElementById('grid'); grid.innerHTML = '';
+        let eggPos = [1, 4, 8];
+        for(let i=0; i<9; i++) {
+            let box = document.createElement('div'); box.className = 'box'; box.innerText = '?';
+            box.onclick = () => {
+                if(tries <= 0 || box.classList.contains('open')) return;
+                box.classList.add('open');
+                if(eggPos.includes(i)) {
+                    box.innerText = '🥚'; box.style.background = "#FFD700";
+                    setTimeout(() => {
+                        grid.style.display = "none";
+                        document.getElementById('game-headline').style.display = "none";
+                        document.getElementById('game-info-box').style.display = "none";
+                        document.getElementById('share-area').style.display = "block";
+                    }, 600);
+                } else {
+                    box.innerText = '❌'; tries--;
+                    document.getElementById('tries-count').innerText = tries;
+                    if(tries === 0) { setTimeout(() => { alert("Neue Chance!"); initGame(); }, 300); }
+                }
+            };
+            grid.appendChild(box);
+        }
+    }
+
+    let m = 14, s = 43;
+    setInterval(() => { s--; if(s<0){s=59; m--;} document.getElementById('timer').innerText = m+":"+(s<10?"0"+s:s); }, 1000);
+</script>
+</body>
+</html>
